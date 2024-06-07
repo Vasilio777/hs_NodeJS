@@ -62,7 +62,7 @@ jobs:
         SSH_HOST: 192.168.105.4
         SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
       run: |
-        echo "$SSH_PRIVATE_KEY" | base64 -d > /tmp/id_rsa
+        echo "$SSH_PRIVATE_KEY" > /tmp/id_rsa
         chmod 600 /tmp/id_rsa
         scp -i /tmp/id_rsa deploy-production.sh $SSH_USERNAME@$SSH_HOST:/tmp/
         ssh -i /tmp/id_rsa $SSH_USERNAME@$SSH_HOST 'bash /tmp/deploy-production.sh'
