@@ -1,0 +1,40 @@
+---
+- name: Deploy flask app
+  hosts: all
+  vars:
+    app_name: flask-app
+    ansible_python_interpreter: /usr/bin/python3
+
+  tasks:
+   - name: Clean target repo
+     file:
+       path: "{{ TARGET_PATH }}"
+       state: absent
+
+   - name: Create target repo
+     file:
+       path: "{{ TARGET_PATH }}"
+       state: directory
+       
+   - name: Pull Docker image
+     community.docker.docker_image:
+       name: "{{ DOCKER_IMAGE }}"
+       source: pull
+
+   - name: Stop and remove old container
+     community.docker.docker_container:
+       name: "{{ app_name }}"
+       state: absent
+     
+   - name: Run new container
+     community.docker.docker_container:
+       name: "{{ app_name }}"
+       image: "{{ DOCKER_IMAGE }}"
+       state: started
+       ports:
+         - "4444:4444"
+         
+   - name: Check health
+     shell: |
+       sleep 10
+       curl -f http://localhost:4444/api || exit 1

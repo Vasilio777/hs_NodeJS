@@ -1,0 +1,22 @@
+{
+  "name": "hs_nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vasilio777/hs_NodeJS.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Vasilio777/hs_NodeJS/issues"
+  },
+  "homepage": "https://github.com/Vasilio777/hs_NodeJS#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
