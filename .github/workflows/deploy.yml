@@ -58,11 +58,9 @@ jobs:
 
     - name: Deploy to production
       env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        SSH_HOST: 192.168.105.4
-        SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+        DOCKER_HOST: ssh://vagrant@192.168.105.4
       run: |
-        echo "$SSH_PRIVATE_KEY" > /tmp/id_rsa
-        chmod 600 /tmp/id_rsa
-        scp -i /tmp/id_rsa deploy-production.sh $SSH_USERNAME@$SSH_HOST:/tmp/
-        ssh -i /tmp/id_rsa $SSH_USERNAME@$SSH_HOST 'bash /tmp/deploy-production.sh'
+        docker pull vasesdas/nodejs-app:${{ github.sha }}
+        docker stop nodejs-app || true
+        docker rm nodejs-app || true
+        docker run -d --name nodejs-app -p 4444:4444 vasesdas/nodejs-app:${{ github.sha }}
