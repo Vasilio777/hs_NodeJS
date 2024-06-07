@@ -56,6 +56,15 @@ jobs:
       run: |
         docker pull vasesdas/nodejs-app:${{ github.sha }}
 
+    - name: setup SSH
+      uses: webfactory/ssh-agent@v0.5.4
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: add SSH host
+      run: |
+        ssh-keyscan 192.168.105.4 >> ~/.ssh/known_hosts
+        
     - name: Deploy to production
       env:
         DOCKER_HOST: ssh://vagrant@192.168.105.4
