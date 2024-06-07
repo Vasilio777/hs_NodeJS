@@ -1,10 +1,5 @@
 pipeline {
     agent any
-
-    environment {
-    	K8S_SERVER = '192.168.105.4'
-    	DEPLOY_USER = 'vagrant'
-    }
     
     stages {
     	stage('Install dependencies') {
