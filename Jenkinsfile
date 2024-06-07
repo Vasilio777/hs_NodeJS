@@ -8,13 +8,6 @@ pipeline {
     }
     
     stages {
-
-    	stage('Install nodejs') {
-    		tools {
-    			nodejs "NodeJS ${NODEJS_VERSION}"
-    		}
-    	}
-
     	stage('Install dependencies') {
     		steps {
     			sh 'npm install'
