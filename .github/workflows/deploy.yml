@@ -1,0 +1,66 @@
+name: Build and Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '21.x'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run unit tests
+      run: npm test
+
+    - name: Build Docker image
+      run: |
+        docker build -t vasesdas/nodejs-app:${{ github.sha }} .
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Push Docker image
+      run: |
+        docker push vasesdas/nodejs-app:${{ github.sha }}
+
+  deploy:
+    runs-on: self-hosted
+    needs: build
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Pull Docker image
+      run: |
+        docker pull vasesdas/nodejs-app:${{ github.sha }}
+
+    - name: Deploy to production
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        SSH_HOST: 192.168.105.4
+        SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+      run: |
+        scp -i "$SSH_PRIVATE_KEY" deploy-production.sh $SSH_USERNAME@$SSH_HOST:/tmp/
+        ssh -i "$SSH_PRIVATE_KEY" $SSH_USERNAME@$SSH_HOST 'bash /tmp/deploy-production.sh'

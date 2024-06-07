@@ -33,3 +33,5 @@ coverage/
 *.ntvs*
 *.njsproj
 *.sln
+
+log.txt
