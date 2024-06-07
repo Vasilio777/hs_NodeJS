@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-    	NODEJS_VERSION = '21.x'
     	K8S_SERVER = '192.168.105.4'
     	DEPLOY_USER = 'vagrant'
     }
@@ -10,7 +9,13 @@ pipeline {
     stages {
     	stage('Install dependencies') {
     		steps {
-    			sh 'npm install'
+    			sh '''
+    			curl -fsSL https://deb.nodesourse.com/setup_21.x | sudo -E bash -
+    			sudo apt-get install -y nodejs
+    			node -v
+    			npm -v
+    			npm install
+    			'''
     		}
     	}
 
